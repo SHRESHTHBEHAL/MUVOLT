@@ -7,6 +7,7 @@ import { bayStore } from '../store/useStore'
 import { roverState } from './roverState'
 import { COLORS } from './palette'
 import { site } from '../content/site'
+import { audio } from '../audio/AudioManager'
 
 function Ring({ index, position, radius, label, subtitle }: { index: number; position: [number, number]; radius: number; label: string; subtitle: string }) {
   const ring = useRef<THREE.Mesh>(null)
@@ -56,6 +57,7 @@ export function Stations() {
     if (entered === last.current) return
     last.current = entered
     const next = resolveEntry(s.activeStation, s.autopilotTarget, entered)
+    if (next.active) audio.play(next.active === 'dock' ? 'dock' : 'servo')
     if (next.active !== s.activeStation) s.setActiveStation(next.active)
     if (next.autopilot !== s.autopilotTarget && next.active === null) s.setAutopilot(next.autopilot)
   })

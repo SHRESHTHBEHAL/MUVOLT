@@ -10,6 +10,7 @@ import { stationAt, SPAWN } from '../logic/stations'
 import { COLORS } from './palette'
 import { RoverFX } from './RoverFX'
 import { roverState, roverTeleport } from './roverState'
+import { audio } from '../audio/AudioManager'
 
 export const ROVER = {
   spawnY: 0.6,
@@ -134,8 +135,10 @@ export function Rover() {
     roverState.steer = input.steer
     roverState.boosting = boosting
     roverState.braking = (lastSpeed.current - speed) / dt > 6
+    if (input.horn && !roverState.horn) audio.play('horn')
     roverState.horn = input.horn
     lastSpeed.current = speed
+    audio.setMotor((Math.abs(input.throttle) * 0.3 + speed / ROVER.maxBoost * 0.7) * (boosting ? 1.15 : 1))
 
     // store writes, throttled
     frame.current++
