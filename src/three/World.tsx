@@ -6,6 +6,7 @@ import { tierSettings, type Tier } from '../logic/tier'
 import { useStore } from '../store/useStore'
 import { COLORS } from './palette'
 import { site } from '../content/site'
+import { Atmosphere } from './Atmosphere'
 
 const HALF = FLOOR_SIZE / 2
 const WALL_H = 8
@@ -66,7 +67,7 @@ function Wall({ position, rotation, width }: { position: [number, number, number
 
 /** One overhead industrial fixture: housing + emissive tube + spotlight. */
 function Fixture({ position, on, castShadow }: { position: [number, number, number]; on: boolean; castShadow: boolean }) {
-  const intensity = on ? 220 : 0
+  const intensity = on ? 300 : 0
   const target = useMemo(() => {
     const t = new THREE.Object3D()
     t.position.set(0, -position[1], 0)
@@ -92,7 +93,7 @@ function Fixture({ position, on, castShadow }: { position: [number, number, numb
         distance={30}
         decay={1.5}
         color={COLORS.tungsten}
-        castShadow={castShadow && on}
+        castShadow={castShadow}
         shadow-mapSize={[1024, 1024]}
         shadow-bias={-0.0004}
       />
@@ -157,8 +158,9 @@ export function World({ tier }: { tier: Tier }) {
         return <Fixture key={i} position={p} on={on} castShadow={shadows && i % 3 === 1} />
       })}
 
-      <ambientLight intensity={0.15 + bootProgress * 0.35} color="#9fb3c8" />
-      <hemisphereLight intensity={0.5 * bootProgress} color="#7f8da3" groundColor="#15171c" />
+      <ambientLight intensity={0.18 + bootProgress * 0.42} color="#9fb3c8" />
+      <hemisphereLight intensity={0.6 * bootProgress} color="#7f8da3" groundColor="#15171c" />
+      <Atmosphere lightsOn={bootProgress >= 1} />
     </group>
   )
 }

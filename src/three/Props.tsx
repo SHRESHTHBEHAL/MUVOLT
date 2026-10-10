@@ -11,7 +11,9 @@ export const SHUTTER_POS: [number, number] = [0, -21]
 export const HATCH_POS: [number, number] = [10, 6]
 export const GRAVEYARD_CENTER: [number, number] = [0, -28]
 export const ARCADE_CENTER: [number, number] = [10, -30]
-export const ARCADE_Y = -6
+export const ARCADE_Y = -9
+export const ARCADE_SIZE = 26
+export const ARCADE_H = 7
 
 const metal = { color: COLORS.steelMid, metalness: 0.65, roughness: 0.45 }
 const darkMetal = { color: COLORS.steelDark, metalness: 0.7, roughness: 0.4 }
@@ -440,58 +442,95 @@ export function Graveyard() {
 /** Arcade room below the floor, reached via the hatch. */
 export function Arcade({ credits }: { credits: string[] }) {
   const [cx, cz] = ARCADE_CENTER
+  const S = ARCADE_SIZE
+  const H = ARCADE_H
   const tex = useMemo(() => {
     const c = document.createElement('canvas')
-    c.width = 768
-    c.height = 1024
+    c.width = 1024
+    c.height = 768
     const g = c.getContext('2d')!
-    g.fillStyle = '#05030a'
-    g.fillRect(0, 0, 768, 1024)
+    g.fillStyle = '#07040c'
+    g.fillRect(0, 0, 1024, 768)
+    // scanlines
+    g.fillStyle = 'rgba(255,255,255,0.04)'
+    for (let y = 0; y < 768; y += 4) g.fillRect(0, y, 1024, 1)
     g.textAlign = 'center'
     credits.forEach((line, i) => {
-      g.font = i === 0 ? 'bold 72px "Space Grotesk", sans-serif' : '28px "IBM Plex Mono", monospace'
-      g.fillStyle = i === 0 ? COLORS.magenta : i === credits.length - 1 ? COLORS.cyan : '#d6d9de'
-      g.fillText(line, 384, 140 + i * 68)
+      g.font = i === 0 ? 'bold 96px "Space Grotesk", sans-serif' : '34px "IBM Plex Mono", monospace'
+      g.fillStyle = i === 0 ? COLORS.magenta : i === credits.length - 1 ? COLORS.cyan : '#e6e8ec'
+      g.fillText(line, 512, 120 + i * 58)
     })
     const t = new THREE.CanvasTexture(c)
     t.colorSpace = THREE.SRGBColorSpace
     return t
   }, [credits])
+  const strip = (x: number, y: number, z: number, rx: number, ry: number, rz: number, len: number, c: string, key: number) => (
+    <mesh key={key} position={[x, y, z]} rotation={[rx, ry, rz]}>
+      <cylinderGeometry args={[0.05, 0.05, len, 8]} />
+      <meshStandardMaterial color="#fff" emissive={c} emissiveIntensity={3} toneMapped={false} />
+    </mesh>
+  )
   return (
     <group position={[cx, ARCADE_Y, cz]}>
+      {/* floor: dark reflective tiles */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[14, 14]} />
-        <meshStandardMaterial color="#070509" roughness={0.3} metalness={0.4} />
+        <planeGeometry args={[S, S]} />
+        <meshStandardMaterial color="#0a0710" roughness={0.25} metalness={0.5} />
       </mesh>
-      {[[0, 3, -7, 0], [0, 3, 7, Math.PI], [-7, 3, 0, Math.PI / 2], [7, 3, 0, -Math.PI / 2]].map(([x, y, z, ry], i) => (
+      {/* floor grid lines in neon */}
+      {Array.from({ length: 7 }).map((_, i) => {
+        const o = -S / 2 + (i * S) / 6
+        return (
+          <group key={i}>
+            <mesh position={[o, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+              <planeGeometry args={[0.06, S]} />
+              <meshStandardMaterial color={COLORS.magenta} emissive={COLORS.magenta} emissiveIntensity={0.8} toneMapped={false} transparent opacity={0.5} />
+            </mesh>
+            <mesh position={[0, 0.01, o]} rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
+              <planeGeometry args={[0.06, S]} />
+              <meshStandardMaterial color={COLORS.cyan} emissive={COLORS.cyan} emissiveIntensity={0.8} toneMapped={false} transparent opacity={0.5} />
+            </mesh>
+          </group>
+        )
+      })}
+      {/* walls and ceiling */}
+      {[[0, H / 2, -S / 2, 0], [0, H / 2, S / 2, Math.PI], [-S / 2, H / 2, 0, Math.PI / 2], [S / 2, H / 2, 0, -Math.PI / 2]].map(([x, y, z, ry], i) => (
         <mesh key={i} position={[x, y, z]} rotation={[0, ry, 0]}>
-          <planeGeometry args={[14, 6]} />
-          <meshStandardMaterial color="#0a0710" />
+          <planeGeometry args={[S, H]} />
+          <meshStandardMaterial color="#0c0914" roughness={0.9} />
         </mesh>
       ))}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 6, 0]}>
-        <planeGeometry args={[14, 14]} />
-        <meshStandardMaterial color="#030205" />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, H, 0]}>
+        <planeGeometry args={[S, S]} />
+        <meshStandardMaterial color="#050308" />
       </mesh>
-      {/* neon strips */}
-      {[[-6.9, 0.3, 0, 0, 0, Math.PI / 2, COLORS.magenta], [6.9, 0.3, 0, 0, 0, Math.PI / 2, COLORS.cyan], [0, 0.3, -6.9, Math.PI / 2, 0, 0, COLORS.cyan]].map(([x, y, z, rx, ry, rz, c], i) => (
-        <mesh key={i} position={[x as number, y as number, z as number]} rotation={[rx as number, ry as number, rz as number]}>
-          <cylinderGeometry args={[0.04, 0.04, 13.6, 8]} />
-          <meshStandardMaterial color="#fff" emissive={c as string} emissiveIntensity={3} toneMapped={false} />
-        </mesh>
-      ))}
-      {/* the one screen */}
-      <group position={[0, 2.6, -6.7]}>
-        <RoundedBox args={[3.2, 4.2, 0.3]} radius={0.05}>
+      {/* neon edge strips along the floor and ceiling */}
+      {strip(-S / 2 + 0.1, 0.3, 0, Math.PI / 2, 0, 0, S, COLORS.magenta, 0)}
+      {strip(S / 2 - 0.1, 0.3, 0, Math.PI / 2, 0, 0, S, COLORS.cyan, 1)}
+      {strip(0, 0.3, -S / 2 + 0.1, 0, 0, Math.PI / 2, S, COLORS.cyan, 2)}
+      {strip(0, 0.3, S / 2 - 0.1, 0, 0, Math.PI / 2, S, COLORS.magenta, 3)}
+      {strip(-S / 2 + 0.1, H - 0.3, 0, Math.PI / 2, 0, 0, S, COLORS.cyan, 4)}
+      {strip(S / 2 - 0.1, H - 0.3, 0, Math.PI / 2, 0, 0, S, COLORS.magenta, 5)}
+      {/* the one screen: wide, low, readable from the floor */}
+      <group position={[0, 3.2, -S / 2 + 0.5]}>
+        <RoundedBox args={[9.2, 7.0, 0.4]} radius={0.06}>
           <meshStandardMaterial color="#111" metalness={0.5} roughness={0.5} />
         </RoundedBox>
-        <mesh position={[0, 0, 0.16]}>
-          <planeGeometry args={[2.9, 3.9]} />
-          <meshStandardMaterial map={tex} emissiveMap={tex} emissive="#fff" emissiveIntensity={0.8} toneMapped={false} />
+        <mesh position={[0, 0, 0.21]}>
+          <planeGeometry args={[8.8, 6.6]} />
+          <meshStandardMaterial map={tex} emissiveMap={tex} emissive="#fff" emissiveIntensity={1.1} toneMapped={false} />
         </mesh>
+        <pointLight position={[0, 0, 3]} color="#c9a8ff" intensity={30} distance={16} decay={2} />
       </group>
-      <pointLight position={[-5, 2, 0]} color={COLORS.magenta} intensity={12} distance={12} decay={2} />
-      <pointLight position={[5, 2, 0]} color={COLORS.cyan} intensity={12} distance={12} decay={2} />
+      <Text position={[0, 0.02, 4]} rotation={[-Math.PI / 2, 0, 0]} fontSize={1.6} letterSpacing={0.25} color={COLORS.magenta} anchorX="center" anchorY="middle" fillOpacity={0.8}>
+        ARCADE
+      </Text>
+      <Text position={[0, 0.02, 6]} rotation={[-Math.PI / 2, 0, 0]} fontSize={0.45} letterSpacing={0.3} color="#8a9099" anchorX="center" anchorY="middle">
+        SUB-LEVEL · NOBODY KNOWS THIS IS HERE
+      </Text>
+      <pointLight position={[-8, 4, 2]} color={COLORS.magenta} intensity={40} distance={22} decay={2} />
+      <pointLight position={[8, 4, 2]} color={COLORS.cyan} intensity={40} distance={22} decay={2} />
+      <ambientLight intensity={0.35} color="#8a6cff" />
     </group>
   )
 }

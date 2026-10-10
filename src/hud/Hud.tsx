@@ -4,6 +4,7 @@ import { Telemetry } from './Telemetry'
 import { Minimap } from './Minimap'
 import { MobileControls } from './MobileControls'
 import { PanelFrame } from './PanelFrame'
+import { StationStrip } from './StationStrip'
 import { isTouch } from './device'
 
 export function Hud() {
@@ -12,6 +13,7 @@ export function Hud() {
   return (
     <div className="fade-in">
       <TopNav />
+      <StationStrip />
       <Telemetry />
       <Minimap />
       {isTouch() && <MobileControls />}

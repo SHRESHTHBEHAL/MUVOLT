@@ -4,6 +4,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { roverState } from './roverState'
 import { bayStore } from '../store/useStore'
 import { stationById } from '../logic/stations'
+import { ARCADE_CENTER, ARCADE_Y, ARCADE_SIZE, ARCADE_H } from './Props'
 
 const CHASE_OFFSET = new THREE.Vector3(0, 5, -8)
 const LOOK_AHEAD = 3
@@ -37,7 +38,16 @@ export function CameraRig() {
       const ox = CHASE_OFFSET.x * Math.cos(h) + CHASE_OFFSET.z * Math.sin(h)
       const oz = -CHASE_OFFSET.x * Math.sin(h) + CHASE_OFFSET.z * Math.cos(h)
       const speedPull = Math.min(1, roverState.speed / 14) * 2.5
-      tmp.desired.set(rp.x + ox - Math.sin(h) * speedPull, CHASE_OFFSET.y + speedPull * 0.3, rp.z + oz - Math.cos(h) * speedPull)
+      const underground = rp.y < ARCADE_Y + ARCADE_H
+      const camY = underground ? rp.y + 3.2 : CHASE_OFFSET.y + speedPull * 0.3
+      const back = underground ? 0.8 : 1
+      tmp.desired.set(rp.x + ox * back - Math.sin(h) * speedPull, camY, rp.z + oz * back - Math.cos(h) * speedPull)
+      if (underground) {
+        const m = ARCADE_SIZE / 2 - 0.8
+        tmp.desired.x = Math.max(ARCADE_CENTER[0] - m, Math.min(ARCADE_CENTER[0] + m, tmp.desired.x))
+        tmp.desired.z = Math.max(ARCADE_CENTER[1] - m, Math.min(ARCADE_CENTER[1] + m, tmp.desired.z))
+        tmp.desired.y = Math.min(tmp.desired.y, ARCADE_Y + ARCADE_H - 0.6)
+      }
       tmp.look.set(rp.x + Math.sin(h) * LOOK_AHEAD, rp.y + 0.8, rp.z + Math.cos(h) * LOOK_AHEAD)
     }
 

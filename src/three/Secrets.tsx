@@ -7,7 +7,7 @@ import gsap from 'gsap'
 import { HonkKeypad, Konami, CrateTower } from '../logic/secrets'
 import { bayStore } from '../store/useStore'
 import { roverState, roverTeleport } from './roverState'
-import { Shutter, Arcade, CRATE_TOWER_POS, SHUTTER_POS, HATCH_POS, ARCADE_CENTER, ARCADE_Y } from './Props'
+import { Shutter, Arcade, CRATE_TOWER_POS, SHUTTER_POS, HATCH_POS, ARCADE_CENTER, ARCADE_Y, ARCADE_SIZE } from './Props'
 import { COLORS } from './palette'
 import { site } from '../content/site'
 import { audio } from '../audio/AudioManager'
@@ -55,7 +55,7 @@ function HatchSecret() {
   const lid = useRef<THREE.Mesh>(null)
   const busy = useRef(false)
   const [cx, cz] = ARCADE_CENTER
-  const liftPos: [number, number] = [cx, cz + 5]
+  const liftPos: [number, number] = [cx, cz + ARCADE_SIZE / 2 - 4]
   const lift = useRef<THREE.Mesh>(null)
 
   useFrame(({ clock }) => {
@@ -69,7 +69,7 @@ function HatchSecret() {
       if (!s.secrets.arcade) s.unlockSecret('arcade')
       audio.play('servo')
       if (lid.current) gsap.to(lid.current.rotation, { x: -Math.PI / 2 - 0.4, duration: 0.25, ease: 'power3.out' })
-      roverTeleport.request({ x: cx, y: ARCADE_Y + 4, z: cz - 3, keepVelocity: true })
+      roverTeleport.request({ x: cx, y: ARCADE_Y + 2.2, z: cz + 2, keepVelocity: false })
       setTimeout(() => {
         if (lid.current) gsap.to(lid.current.rotation, { x: 0, duration: 0.6, ease: 'power2.inOut' })
         busy.current = false
@@ -111,12 +111,21 @@ function HatchSecret() {
       <Arcade credits={site.credits} />
       <group position={[liftPos[0], ARCADE_Y + 0.03, liftPos[1]]}>
         <mesh ref={lift} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[1.2, 1.5, 48]} />
+          <ringGeometry args={[1.5, 1.9, 48]} />
           <meshStandardMaterial color={COLORS.cyan} emissive={COLORS.cyan} emissiveIntensity={1} toneMapped={false} side={THREE.DoubleSide} />
         </mesh>
-        <Text position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} fontSize={0.4} letterSpacing={0.25} color={COLORS.cyan} anchorX="center" anchorY="middle">
-          LIFT
+        {/* translucent light shaft so the lift reads from across the room */}
+        <mesh position={[0, 3.5, 0]}>
+          <cylinderGeometry args={[1.7, 1.7, 7, 32, 1, true]} />
+          <meshBasicMaterial color={COLORS.cyan} transparent opacity={0.08} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
+        </mesh>
+        <Text position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} fontSize={0.5} letterSpacing={0.3} color={COLORS.cyan} anchorX="center" anchorY="middle">
+          LIFT ↑
         </Text>
+        <Text position={[0, 2.4, -2.0]} fontSize={0.42} letterSpacing={0.2} color={COLORS.cyan} anchorX="center" anchorY="middle">
+          DRIVE IN TO GO UP
+        </Text>
+        <pointLight position={[0, 2, 0]} color={COLORS.cyan} intensity={12} distance={9} decay={2} />
       </group>
     </group>
   )

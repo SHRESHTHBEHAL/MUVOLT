@@ -1,7 +1,5 @@
+node_modules
+dist
 .superpowers/
-node_modules/
-dist/
-*.local
+tsconfig.tsbuildinfo
 .DS_Store
-*.log
-*.tsbuildinfo

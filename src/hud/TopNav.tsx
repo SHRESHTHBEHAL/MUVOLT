@@ -17,7 +17,7 @@ export function TopNav() {
   const active = useStore((s) => s.activeStation)
   const autopilot = useStore((s) => s.autopilotTarget)
   return (
-    <header className="pointer-events-none fixed top-0 inset-x-0 z-30 flex items-start justify-between p-3 sm:p-5 gap-3">
+    <header className="pointer-events-none fixed top-0 inset-x-0 z-30 flex items-start justify-between p-2.5 sm:p-5 gap-2 sm:gap-3">
       <div className="pointer-events-auto relative console bracket px-3 py-2 flex items-center gap-3">
         <span className="font-display font-bold tracking-tight text-white text-sm">
           MU<span className="text-volt">VOLT</span>
@@ -50,15 +50,19 @@ export function TopNav() {
           onClick={() => { audio.play('click'); bayStore.getState().requestReset() }}
           className="press console px-3 py-2 text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-volt"
           title="Teleport BOLT-7 back to the pad"
+          aria-label="Reset BOLT-7"
         >
-          Reset BOLT-7
+          <span className="sm:hidden">↺</span>
+          <span className="hidden sm:inline">Reset BOLT-7</span>
         </button>
         <Settings />
         <button
           onClick={() => { audio.play('click'); bayStore.getState().setFallback(true) }}
           className="press console px-3 py-2 text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-volt"
+          aria-label="Switch to the reading version"
         >
-          Skip the robot
+          <span className="sm:hidden">Read</span>
+          <span className="hidden sm:inline">Just read</span>
         </button>
       </div>
     </header>

@@ -9,6 +9,8 @@ import { StaticColliders } from './Colliders'
 import { Stations } from './Stations'
 import { Secrets } from './Secrets'
 import { useStore } from '../store/useStore'
+import { Effects } from './Effects'
+import { Stats, Preload } from '@react-three/drei'
 
 export function Scene() {
   const tier = useStore((s) => s.tier)
@@ -23,13 +25,16 @@ export function Scene() {
       <Tracks />
       <Dust />
       <Suspense fallback={null}>
-        <Physics gravity={[0, -14, 0]} timeStep="vary">
+        <Physics gravity={[0, -14, 0]} timeStep={1 / 60}>
           <StaticColliders />
           <Secrets />
           <Rover />
         </Physics>
       </Suspense>
       <CameraRig />
+      <Effects tier={tier} />
+      <Preload all />
+      {typeof window !== 'undefined' && window.location.search.includes('stats') && <Stats />}
     </>
   )
 }

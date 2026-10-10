@@ -173,3 +173,82 @@ canvas {
   .drawer { transition-duration: 1ms; }
   .cursor::after { animation: none; }
 }
+
+/* ---- BOLT-7 mascot ---- */
+@keyframes bolt-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+.bolt .bolt-eye {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: bolt-blink 4.2s ease-in-out infinite;
+}
+.bolt .bolt-eye:nth-child(2) { animation-delay: 0.05s; }
+@keyframes bolt-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.bolt .bolt-antenna { animation: bolt-pulse 1.4s ease-in-out infinite; }
+@keyframes bolt-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.bolt-bob { animation: bolt-bob 2.6s ease-in-out infinite; }
+@keyframes bolt-spin {
+  to { transform: rotate(360deg); }
+}
+.bolt-drive .bolt-spin { animation: bolt-spin 1.2s linear infinite; transform-origin: center; transform-box: fill-box; }
+.bolt .bolt-eyes { transition: transform 120ms ease-out; }
+
+/* ---- reading mode ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(245, 230, 59, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 230, 59, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.locker {
+  background: linear-gradient(180deg, #2f3744 0%, #242a35 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+.locker::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 4px;
+  height: 22px;
+  margin-top: -11px;
+  background: #0e0f12;
+  border-radius: 2px;
+}
+.bubble {
+  position: relative;
+  background: var(--volt);
+  color: var(--ink);
+  border-radius: 14px;
+}
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  bottom: 16px;
+  border: 8px solid transparent;
+  border-right-color: var(--volt);
+  border-left: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bolt-bob, .bolt .bolt-antenna, .bolt-drive .bolt-spin { animation: none; }
+  .reveal { transition: none; opacity: 1; transform: none; }
+}

@@ -50,7 +50,7 @@ export function PanelFrame() {
   return (
     <section
       data-open={active !== null}
-      className="drawer fixed z-40 right-0 bottom-0 md:top-[76px] md:bottom-5 md:right-5 w-full md:w-[460px] max-h-[72vh] md:max-h-none console flex flex-col"
+      className="drawer fixed z-40 right-0 bottom-0 md:top-[76px] md:bottom-5 md:right-5 w-full md:w-[460px] max-h-[64vh] md:max-h-none console flex flex-col"
       style={{ borderLeft: '3px solid var(--volt)' }}
       aria-label={`${meta.label} panel`}
     >
@@ -61,17 +61,17 @@ export function PanelFrame() {
         </div>
         <button
           onClick={() => { audio.play('click'); bayStore.getState().setActiveStation(null) }}
-          className="press label border border-white/10 px-2 py-1 hover:border-volt hover:text-volt"
+          className="press text-[10px] tracking-[0.2em] uppercase border border-volt/50 text-volt px-3 py-2 hover:bg-volt hover:text-ink"
           aria-label="Close panel"
         >
-          esc
+          <span className="md:hidden">close</span><span className="hidden md:inline">esc</span>
         </button>
       </header>
       <div className="scroll overflow-y-auto p-5 pt-4 flex-1">
         <Panel />
       </div>
       <footer className="label p-3 border-t border-white/5 flex justify-between">
-        <span>reverse out to close</span>
+        <span className="hidden md:inline">reverse out to close</span><span className="md:hidden">drive away to close</span>
         <span>{site.robot}</span>
       </footer>
     </section>

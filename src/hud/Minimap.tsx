@@ -32,9 +32,9 @@ export function Minimap() {
   }
 
   return (
-    <div className="fixed right-3 sm:right-5 bottom-3 sm:bottom-5 z-20 console bracket p-2">
-      <div className="label mb-1 flex justify-between"><span>floor plan</span><span>{underground ? 'sub-level' : outside ? 'annex' : 'bay 7'}</span></div>
-      <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} onClick={onClick} className="cursor-pointer block" role="img" aria-label="Minimap, click a station to drive there">
+    <div className="fixed right-3 top-[92px] md:top-auto md:right-5 md:bottom-5 z-20 console bracket p-1.5 md:p-2">
+      <div className="label mb-1 hidden md:flex justify-between"><span>floor plan</span><span>{underground ? 'sub-level' : outside ? 'annex' : 'bay 7'}</span></div>
+      <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} onClick={onClick} className="cursor-pointer block w-[96px] h-[96px] md:w-[150px] md:h-[150px]" role="img" aria-label="Minimap, click a station to drive there">
         <rect x={0.5} y={0.5} width={SIZE - 1} height={SIZE - 1} fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.12)" />
         {[0.25, 0.5, 0.75].map((f) => (
           <g key={f} stroke="rgba(255,255,255,0.05)">

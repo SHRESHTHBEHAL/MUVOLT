@@ -18,6 +18,6 @@ describe('Fallback page', () => {
   it('shows the WebGL notice when given one', () => {
     render(<Fallback notice="no webgl here" canReturn={false} />)
     expect(screen.getByText('no webgl here')).toBeTruthy()
-    expect(screen.getAllByText(/MUVOLT \/\/ BAY 7/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Masters Union/).length).toBeGreaterThan(0)
   })
 })

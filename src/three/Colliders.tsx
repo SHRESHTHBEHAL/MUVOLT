@@ -1,6 +1,6 @@
 import { RigidBody, CuboidCollider } from '@react-three/rapier'
 import { FLOOR_SIZE, stationById } from '../logic/stations'
-import { GRAVEYARD_CENTER, ARCADE_CENTER, ARCADE_Y, SHUTTER_POS } from './Props'
+import { GRAVEYARD_CENTER, ARCADE_CENTER, ARCADE_Y, ARCADE_SIZE, ARCADE_H, SHUTTER_POS } from './Props'
 
 const HALF = FLOOR_SIZE / 2
 
@@ -32,10 +32,13 @@ export function StaticColliders() {
       {/* connecting corridor floor from shutter to graveyard */}
       <CuboidCollider args={[gap, 0.5, 2]} position={[SHUTTER_POS[0], -0.5, SHUTTER_POS[1] - 2]} />
       {/* arcade room */}
-      <CuboidCollider args={[7, 0.5, 7]} position={[ax, ARCADE_Y - 0.5, az]} />
-      <CuboidCollider args={[7, 3, 0.5]} position={[ax, ARCADE_Y + 3, az - 7]} />
-      <CuboidCollider args={[0.5, 3, 7]} position={[ax - 7, ARCADE_Y + 3, az]} />
-      <CuboidCollider args={[0.5, 3, 7]} position={[ax + 7, ARCADE_Y + 3, az]} />
+      <CuboidCollider args={[ARCADE_SIZE / 2, 0.5, ARCADE_SIZE / 2]} position={[ax, ARCADE_Y - 0.5, az]} />
+      <CuboidCollider args={[ARCADE_SIZE / 2, ARCADE_H / 2, 0.5]} position={[ax, ARCADE_Y + ARCADE_H / 2, az - ARCADE_SIZE / 2]} />
+      <CuboidCollider args={[ARCADE_SIZE / 2, ARCADE_H / 2, 0.5]} position={[ax, ARCADE_Y + ARCADE_H / 2, az + ARCADE_SIZE / 2]} />
+      <CuboidCollider args={[0.5, ARCADE_H / 2, ARCADE_SIZE / 2]} position={[ax - ARCADE_SIZE / 2, ARCADE_Y + ARCADE_H / 2, az]} />
+      <CuboidCollider args={[0.5, ARCADE_H / 2, ARCADE_SIZE / 2]} position={[ax + ARCADE_SIZE / 2, ARCADE_Y + ARCADE_H / 2, az]} />
+      {/* ceiling so nothing can pop up through the hangar floor from below */}
+      <CuboidCollider args={[ARCADE_SIZE / 2, 0.5, ARCADE_SIZE / 2]} position={[ax, ARCADE_Y + ARCADE_H + 0.5, az]} />
       {/* props */}
       <CuboidCollider args={[3.6, 0.6, 1.3]} position={[ws.position[0] - 3, 0.6, ws.position[1] - 4]} rotation={[0, Math.PI / 6, 0]} />
       <CuboidCollider args={[3.3, 1.2, 0.45]} position={[cr.position[0] + 2, 1.1, cr.position[1] - 5]} rotation={[0, -Math.PI / 5, 0]} />

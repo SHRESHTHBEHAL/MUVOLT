@@ -24,7 +24,15 @@ export function Telemetry() {
   const zone = active ? site.stations.find((s) => s.id === active)!.label : 'open floor'
 
   return (
-    <aside className="pointer-events-none fixed left-3 sm:left-5 top-[64px] sm:top-[76px] z-20 w-[196px] console bracket p-3 space-y-2">
+    <>
+    {/* mobile: one slim strip */}
+    <div className="md:hidden pointer-events-none fixed left-3 top-[92px] z-20 console px-2.5 py-1.5 flex items-center gap-3 text-[11px] tabular-nums">
+      <span><span className="text-white">{t.speed.toFixed(1)}</span><span className="text-white/40 text-[9px] ml-0.5">m/s</span></span>
+      <span className="flex items-center gap-1.5"><span className="w-10 h-1 bg-white/10 inline-block"><span className="block h-full" style={{ width: `${t.battery}%`, background: t.battery < 20 ? '#ff4d4d' : 'var(--volt)' }} /></span></span>
+      <span className="text-volt">{found}/4</span>
+      {locked && <span className="text-[#ff4d4d]">hot</span>}
+    </div>
+    <aside className="hidden md:block pointer-events-none fixed left-3 sm:left-5 top-[64px] sm:top-[76px] z-20 w-[196px] console bracket p-3 space-y-2">
       <div className="flex items-center justify-between">
         <span className="label">{site.robot}</span>
         <span className="flex items-center gap-1.5 label">
@@ -53,5 +61,6 @@ export function Telemetry() {
         </div>
       </div>
     </aside>
+    </>
   )
 }
