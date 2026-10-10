@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --volt: #F5E63B;
+  --steel: #4FA3D1;
+  --ink: #0B0C0F;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+}
