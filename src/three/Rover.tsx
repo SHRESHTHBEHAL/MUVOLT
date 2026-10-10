@@ -9,6 +9,7 @@ import { stepTelemetry } from '../logic/telemetry'
 import { stationAt, SPAWN } from '../logic/stations'
 import { COLORS } from './palette'
 import { RoverFX } from './RoverFX'
+import { roverState, roverTeleport } from './roverState'
 
 export const ROVER = {
   spawnY: 0.6,
@@ -23,17 +24,6 @@ export const ROVER = {
   heatLock: 1,
   heatUnlock: 0.3,
 } as const
-
-/** Shared per-frame rover state, read by FX and camera without React. */
-export const roverState = {
-  position: new THREE.Vector3(0, ROVER.spawnY, 0),
-  heading: 0,
-  speed: 0,
-  steer: 0,
-  boosting: false,
-  braking: false,
-  horn: false,
-}
 
 const WHEELS: [number, number][] = [[-0.85, 0.8], [0.85, 0.8], [-0.85, -0.8], [0.85, -0.8]]
 
@@ -62,10 +52,26 @@ export function Rover() {
 
   useEffect(() => bayStore.subscribe((s, prev) => s.resetRequested !== prev.resetRequested && reset()), [])
 
+  const honourTeleport = (rb: RapierRigidBody) => {
+    const t = roverTeleport.pending
+    if (!t) return
+    roverTeleport.pending = null
+    const lv = rb.linvel()
+    rb.setTranslation({ x: t.x, y: t.y, z: t.z }, true)
+    if (!t.keepVelocity) {
+      rb.setLinvel({ x: 0, y: 0, z: 0 }, true)
+      rb.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true)
+    } else {
+      rb.setLinvel({ x: lv.x * 0.4, y: -2, z: lv.z * 0.4 }, true)
+    }
+    rb.setAngvel({ x: 0, y: 0, z: 0 }, true)
+  }
+
   useFrame((_, rawDt) => {
     const rb = body.current
     if (!rb) return
     const dt = Math.min(rawDt, 1 / 30)
+    honourTeleport(rb)
     const store = bayStore.getState()
     const live = store.boot === 'live'
     const input = live ? getInput() : { throttle: 0, steer: 0, boost: false, horn: false }
@@ -109,7 +115,7 @@ export function Rover() {
     // auto-reset when flipped
     const up = new THREE.Vector3(0, 1, 0).applyQuaternion(tmp.q)
     flipTimer.current = up.y < 0 ? flipTimer.current + dt : 0
-    if (flipTimer.current > 3 || p.y < -20) reset()
+    if (flipTimer.current > 3 || p.y < -30) reset()
 
     // visuals
     wheelSpin.current += forwardSpeed * dt / 0.35

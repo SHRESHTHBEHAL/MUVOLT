@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
-import { roverState } from './Rover'
+import { roverState } from './roverState'
 import { bayStore } from '../store/useStore'
 import { tierSettings } from '../logic/tier'
 import { COLORS } from './palette'

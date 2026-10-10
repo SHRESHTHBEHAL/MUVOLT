@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
-import { roverState } from './Rover'
+import { roverState } from './roverState'
 import { bayStore } from '../store/useStore'
 import { stationById } from '../logic/stations'
 
