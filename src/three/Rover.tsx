@@ -122,7 +122,7 @@ export function Rover() {
     wheelSpin.current += forwardSpeed * dt / 0.35
     wheels.current.forEach((w, i) => {
       if (!w) return
-      w.rotation.y = i < 2 ? input.steer * 0.45 : 0
+      w.rotation.y = i < 2 ? -input.steer * 0.45 : 0
       const tyre = w.children[0] as THREE.Mesh
       tyre.rotation.x = wheelSpin.current
     })
