@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { HonkKeypad, Konami, CrateTower } from '../../src/logic/secrets'
+import { HonkKeypad, Konami, CrateTower, hatchShouldDrop } from '../../src/logic/secrets'
 
 describe('HonkKeypad', () => {
   it('unlocks on three honks within 2 s inclusive', () => {
@@ -52,5 +52,24 @@ describe('CrateTower', () => {
   })
   it('never resets when standing', () => {
     expect(new CrateTower().shouldReset(99999)).toBe(false)
+  })
+})
+
+describe('Konami with noise', () => {
+  it('tolerates an extra Up at the start (held key auto-repeat)', () => {
+    const k = new Konami()
+    const seq = ['ArrowUp', 'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA']
+    expect(seq.map((c) => k.press(c)).at(-1)).toBe(true)
+  })
+})
+
+describe('hatchShouldDrop', () => {
+  it('never drops the rover while autopilot is driving it', () => {
+    expect(hatchShouldDrop({ distance: 0.5, y: 0.3, autopilot: 'lab' })).toBe(false)
+  })
+  it('drops when close, on the main floor, and driven by hand', () => {
+    expect(hatchShouldDrop({ distance: 0.5, y: 0.3, autopilot: null })).toBe(true)
+    expect(hatchShouldDrop({ distance: 1.4, y: 0.3, autopilot: null })).toBe(false)
+    expect(hatchShouldDrop({ distance: 0.5, y: -5, autopilot: null })).toBe(false)
   })
 })

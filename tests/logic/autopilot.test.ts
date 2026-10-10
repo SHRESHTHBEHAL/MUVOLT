@@ -50,3 +50,9 @@ describe('StuckDetector', () => {
     expect(d.update(5, 1, 5)).toBe(false)
   })
 })
+
+describe('planRoute near the target', () => {
+  it('goes direct when the target is close, even far from the centre', () => {
+    expect(planRoute([12, 8], [14, 10])).toEqual([[14, 10]])
+  })
+})

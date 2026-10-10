@@ -10,6 +10,7 @@ import { JoinPanel } from '../panels/JoinPanel'
 import { Bolt } from '../ui/Bolt'
 import { Machine } from '../ui/Machines'
 import { RobotAvatar } from '../ui/RobotAvatar'
+import { audio } from '../audio/AudioManager'
 
 /** Adds `.in` to every `.reveal` once it scrolls into view. */
 function useReveal() {
@@ -19,9 +20,19 @@ function useReveal() {
       els.forEach((el) => el.classList.add('in'))
       return
     }
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { rootMargin: '-40px' })
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return
+          e.target.classList.add('in')
+          io.unobserve(e.target)
+        }),
+      { rootMargin: '0px 0px -40px 0px', threshold: 0 },
+    )
     els.forEach((el) => io.observe(el))
-    return () => io.disconnect()
+    // safety net: nothing stays invisible if the observer never fires
+    const t = window.setTimeout(() => els.forEach((el) => el.classList.add('in')), 6000)
+    return () => { io.disconnect(); clearTimeout(t) }
   }, [])
 }
 
@@ -121,6 +132,11 @@ function Locker({ m, i }: { m: (typeof team)[number]; i: number }) {
 /** The whole site as one scrollable page, with BOLT-7 tagging along. */
 export function Fallback({ notice, canReturn }: { notice?: string; canReturn: boolean }) {
   useReveal()
+  useEffect(() => {
+    audio.setMotor(0)
+    audio.setAmbience(false)
+    return () => audio.setAmbience(true)
+  }, [])
   const [bubble, setBubble] = useState(0)
   const [happy, setHappy] = useState(false)
   const beepTimer = useRef(0)

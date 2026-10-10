@@ -79,3 +79,7 @@ export class AudioManager {
 }
 
 export const audio = new AudioManager()
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => audio.mute(document.hidden))
+}

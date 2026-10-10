@@ -36,6 +36,8 @@ export function useInput(): (dt: number) => InputState {
       const pos: [number, number] = [roverState.position.x, roverState.position.z]
       if (!route.current || route.current.target !== s.autopilotTarget) {
         route.current = { target: s.autopilotTarget, waypoints: planRoute(pos, stationById(s.autopilotTarget).position) }
+        stuck.current = new StuckDetector()
+        lastFrame.current = IDLE
       }
       const wps = route.current.waypoints
       const final = wps.length === 1

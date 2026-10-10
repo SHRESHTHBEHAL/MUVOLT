@@ -15,5 +15,6 @@ export const join: JoinInfo = {
     { label: 'YouTube', href: 'https://youtube.com/@muvolt' },
     { label: 'Discord', href: 'https://discord.gg/muvolt' },
   ],
-  formEndpoint: 'https://example.com/muvolt-join',
+  // Leave empty until you have a real endpoint: the form then completes locally and sends nothing.
+  formEndpoint: '',
 }

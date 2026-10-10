@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { Fallback } from '../src/fallback/Fallback'
 import { projects } from '../src/content/projects'
@@ -19,5 +19,28 @@ describe('Fallback page', () => {
     render(<Fallback notice="no webgl here" canReturn={false} />)
     expect(screen.getByText('no webgl here')).toBeTruthy()
     expect(screen.getAllByText(/Masters Union/).length).toBeGreaterThan(0)
+  })
+})
+
+import { fireEvent, waitFor, within } from '@testing-library/react'
+import { JoinPanel } from '../src/panels/JoinPanel'
+import { join } from '../src/content/join'
+
+describe('JoinPanel', () => {
+  it('shows the success state without a network call when no endpoint is configured', async () => {
+    const original = join.formEndpoint
+    join.formEndpoint = ''
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+    const { container } = render(<JoinPanel />)
+    const q = within(container)
+    fireEvent.change(q.getByPlaceholderText('Name'), { target: { value: 'Member 1' } })
+    fireEvent.change(q.getByPlaceholderText('Email'), { target: { value: 'm1@example.org' } })
+    fireEvent.change(container.querySelector('select')!, { target: { value: 'First Year' } })
+    fireEvent.submit(container.querySelector('form')!)
+    await waitFor(() => expect(q.getByText(/Docked/)).toBeTruthy())
+    expect(q.getByText(/reply within a few days/)).toBeTruthy()
+    expect(fetchSpy).not.toHaveBeenCalled()
+    fetchSpy.mockRestore()
+    join.formEndpoint = original
   })
 })

@@ -12,11 +12,17 @@ export function JoinPanel() {
     const data = Object.fromEntries(new FormData(e.currentTarget).entries())
     setStatus('sending')
     audio.play('click')
-    try {
-      const res = await fetch(join.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-      setStatus(res.ok ? 'sent' : 'failed')
-    } catch {
-      setStatus('failed')
+    if (!join.formEndpoint) {
+      // no endpoint configured yet: nothing leaves the browser, but the flow still completes
+      await new Promise((r) => setTimeout(r, 500))
+      setStatus('sent')
+    } else {
+      try {
+        const res = await fetch(join.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        setStatus(res.ok ? 'sent' : 'failed')
+      } catch {
+        setStatus('failed')
+      }
     }
     audio.play('dock')
   }

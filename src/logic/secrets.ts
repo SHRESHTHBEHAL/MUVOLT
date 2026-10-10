@@ -31,7 +31,9 @@ export class Konami {
       }
       return false
     }
-    this.index = code === KONAMI[0] ? 1 : 0
+    // a third Up (held-key auto-repeat) keeps the two we already have; any other stray key restarts
+    if (code === KONAMI[0]) this.index = this.index >= 2 ? 2 : 1
+    else this.index = 0
     return false
   }
 }
@@ -51,4 +53,11 @@ export class CrateTower {
   reset(): void {
     this.knockedAt = null
   }
+}
+
+export const HATCH_TRIGGER_RADIUS = 1.3
+
+/** The hatch only swallows a rover that is driven into it by hand, on the main floor. */
+export function hatchShouldDrop(o: { distance: number; y: number; autopilot: string | null }): boolean {
+  return o.autopilot === null && o.y > -1 && o.distance < HATCH_TRIGGER_RADIUS
 }

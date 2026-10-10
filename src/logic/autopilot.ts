@@ -27,8 +27,9 @@ const NEAR_CENTER = 6
 /** Every prop sits behind its ring near a wall, so going via the centre clears them all. */
 export function planRoute(pos: [number, number], target: [number, number]): [number, number][] {
   const nearCenter = Math.hypot(pos[0] - CENTER[0], pos[1] - CENTER[1]) < NEAR_CENTER
+  const nearTarget = Math.hypot(pos[0] - target[0], pos[1] - target[1]) < NEAR_CENTER
   const targetIsCenter = target[0] === CENTER[0] && target[1] === CENTER[1]
-  if (nearCenter || targetIsCenter) return [target]
+  if (nearCenter || nearTarget || targetIsCenter) return [target]
   return [CENTER, target]
 }
 

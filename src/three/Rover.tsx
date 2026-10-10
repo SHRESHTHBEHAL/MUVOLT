@@ -39,7 +39,8 @@ export function Rover() {
   const heat = useRef(0)
   const heatLocked = useRef(false)
   const lastSpeed = useRef(0)
-  const tmp = useRef({ fwd: new THREE.Vector3(), q: new THREE.Quaternion(), v: new THREE.Vector3() }).current
+  const telemetryDt = useRef(0)
+  const tmp = useRef({ fwd: new THREE.Vector3(), flat: new THREE.Vector3(), up: new THREE.Vector3(), q: new THREE.Quaternion(), v: new THREE.Vector3() }).current
 
   const reset = () => {
     const rb = body.current
@@ -57,6 +58,7 @@ export function Rover() {
     const t = roverTeleport.pending
     if (!t) return
     roverTeleport.pending = null
+    if (bayStore.getState().autopilotTarget) bayStore.getState().setAutopilot(null)
     const lv = rb.linvel()
     rb.setTranslation({ x: t.x, y: t.y, z: t.z }, true)
     if (!t.keepVelocity) {
@@ -86,7 +88,8 @@ export function Rover() {
     const lv = rb.linvel()
     tmp.v.set(lv.x, 0, lv.z)
     const speed = tmp.v.length()
-    const forwardSpeed = tmp.v.dot(tmp.fwd.clone().setY(0).normalize())
+    tmp.flat.copy(tmp.fwd).setY(0).normalize()
+    const forwardSpeed = tmp.v.dot(tmp.flat)
 
     // boost heat
     const wantBoost = input.boost && input.throttle > 0
@@ -100,8 +103,8 @@ export function Rover() {
     const force = (boosting ? ROVER.boostForce : ROVER.driveForce) * (inStation ? 0.5 : 1)
     const maxSpeed = store.turbo ? ROVER.maxTurbo : boosting ? ROVER.maxBoost : ROVER.maxSpeed
     if (input.throttle !== 0) {
-      const dir = tmp.fwd.clone().setY(0).normalize().multiplyScalar(input.throttle * force * dt)
-      rb.applyImpulse({ x: dir.x, y: 0, z: dir.z }, true)
+      const k = input.throttle * force * dt
+      rb.applyImpulse({ x: tmp.flat.x * k, y: 0, z: tmp.flat.z * k }, true)
     }
     if (input.steer !== 0) {
       const grip = Math.min(1, 0.35 + speed / 4)
@@ -114,8 +117,8 @@ export function Rover() {
     }
 
     // auto-reset when flipped
-    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(tmp.q)
-    flipTimer.current = up.y < 0 ? flipTimer.current + dt : 0
+    tmp.up.set(0, 1, 0).applyQuaternion(tmp.q)
+    flipTimer.current = tmp.up.y < 0 ? flipTimer.current + dt : 0
     if (flipTimer.current > 3 || p.y < -30) reset()
 
     // visuals
@@ -142,10 +145,12 @@ export function Rover() {
 
     // store writes, throttled
     frame.current++
+    telemetryDt.current += dt
     if (frame.current % 3 === 0) store.setRoverPose([p.x, p.y, p.z], heading)
     if (frame.current % 6 === 0) {
       const docked = stationAt([p.x, p.z]) === 'dock'
-      store.setTelemetry(stepTelemetry(store.telemetry, speed, dt * 6, docked))
+      store.setTelemetry(stepTelemetry(store.telemetry, speed, telemetryDt.current, docked))
+      telemetryDt.current = 0
       store.setHeat(heatLocked.current ? -heat.current : heat.current)
     }
   })

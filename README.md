@@ -40,7 +40,7 @@ Everything the site says lives in `src/content/`. No 3D knowledge needed.
 | `learn.ts` | the Lab curriculum |
 | `join.ts` | why join, schedule, socials, and the form endpoint |
 
-The interest form posts JSON to `join.formEndpoint`. Point it at a Formspree, Google Apps Script, or your own endpoint.
+The interest form posts JSON to `join.formEndpoint`. It ships empty, which makes the form complete locally without sending anything. Point it at a Formspree, Google Apps Script, or your own endpoint when you have one.
 
 ## Deploy
 

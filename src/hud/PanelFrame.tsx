@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useStore, bayStore } from '../store/useStore'
 import { site } from '../content/site'
 import type { StationId } from '../content/types'
@@ -41,6 +41,11 @@ export function PanelFrame() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  const closeRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (active) closeRef.current?.focus()
+  }, [active])
+
   const id = active ?? shown
   if (!id) return null
   const meta = site.stations.find((s) => s.id === id)!
@@ -60,6 +65,7 @@ export function PanelFrame() {
           <h2 className="font-display font-bold text-2xl tracking-tight text-white leading-none">{meta.label}</h2>
         </div>
         <button
+          ref={closeRef}
           onClick={() => { audio.play('click'); bayStore.getState().setActiveStation(null) }}
           className="press text-[10px] tracking-[0.2em] uppercase border border-volt/50 text-volt px-3 py-2 hover:bg-volt hover:text-ink"
           aria-label="Close panel"

@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import { RigidBody, CuboidCollider, type RapierRigidBody } from '@react-three/rapier'
 import { RoundedBox, Text } from '@react-three/drei'
 import gsap from 'gsap'
-import { HonkKeypad, Konami, CrateTower } from '../logic/secrets'
+import { HonkKeypad, Konami, CrateTower, hatchShouldDrop } from '../logic/secrets'
 import { bayStore } from '../store/useStore'
 import { roverState, roverTeleport } from './roverState'
 import { Shutter, Arcade, CRATE_TOWER_POS, SHUTTER_POS, HATCH_POS, ARCADE_CENTER, ARCADE_Y, ARCADE_SIZE } from './Props'
@@ -63,9 +63,9 @@ function HatchSecret() {
     if (busy.current) return
     const p = roverState.position
     // drop through the hatch
-    if (p.y > -1 && Math.hypot(p.x - HATCH_POS[0], p.z - HATCH_POS[1]) < 1.3) {
+    const s = bayStore.getState()
+    if (hatchShouldDrop({ distance: Math.hypot(p.x - HATCH_POS[0], p.z - HATCH_POS[1]), y: p.y, autopilot: s.autopilotTarget })) {
       busy.current = true
-      const s = bayStore.getState()
       if (!s.secrets.arcade) s.unlockSecret('arcade')
       audio.play('servo')
       if (lid.current) gsap.to(lid.current.rotation, { x: -Math.PI / 2 - 0.4, duration: 0.25, ease: 'power3.out' })
@@ -238,6 +238,9 @@ function KonamiSecret() {
   useEffect(() => {
     const k = new Konami()
     const onKey = (e: KeyboardEvent) => {
+      if (e.repeat) return
+      const t = e.target
+      if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t instanceof HTMLSelectElement) return
       if (k.press(e.code)) {
         const s = bayStore.getState()
         if (!s.secrets.konami) {
