@@ -8,14 +8,14 @@ describe('selectTier', () => {
     expect(selectTier(d({ webgl2: false, benchmarkMs: 1 }))).toBe('low')
   })
   it('mobile is medium only when fast', () => {
-    expect(selectTier(d({ isMobile: true, benchmarkMs: 24.9 }))).toBe('medium')
-    expect(selectTier(d({ isMobile: true, benchmarkMs: 25 }))).toBe('low')
+    expect(selectTier(d({ isMobile: true, benchmarkMs: 39.9 }))).toBe('medium')
+    expect(selectTier(d({ isMobile: true, benchmarkMs: 40 }))).toBe('low')
   })
   it('desktop steps high → medium → low on benchmark', () => {
-    expect(selectTier(d({ benchmarkMs: 39.9 }))).toBe('high')
-    expect(selectTier(d({ benchmarkMs: 40 }))).toBe('medium')
-    expect(selectTier(d({ benchmarkMs: 89.9 }))).toBe('medium')
-    expect(selectTier(d({ benchmarkMs: 90 }))).toBe('low')
+    expect(selectTier(d({ benchmarkMs: 59.9 }))).toBe('high')
+    expect(selectTier(d({ benchmarkMs: 60 }))).toBe('medium')
+    expect(selectTier(d({ benchmarkMs: 119.9 }))).toBe('medium')
+    expect(selectTier(d({ benchmarkMs: 120 }))).toBe('low')
   })
 })
 

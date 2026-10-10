@@ -11,6 +11,7 @@ const LOOK_AHEAD = 3
 
 export function CameraRig() {
   const { camera } = useThree()
+  if (import.meta.env.DEV) (window as unknown as { bayCam: unknown }).bayCam = camera
   const tmp = useRef({
     desired: new THREE.Vector3(),
     look: new THREE.Vector3(),

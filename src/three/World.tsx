@@ -90,7 +90,7 @@ function Fixture({ position, on, castShadow }: { position: [number, number, numb
         angle={1.05}
         penumbra={0.7}
         intensity={intensity}
-        distance={30}
+        distance={15}
         decay={1.5}
         color={COLORS.tungsten}
         castShadow={castShadow}

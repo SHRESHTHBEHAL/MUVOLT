@@ -252,3 +252,72 @@ canvas {
   .bolt-bob, .bolt .bolt-antenna, .bolt-drive .bolt-spin { animation: none; }
   .reveal { transition: none; opacity: 1; transform: none; }
 }
+
+/* ---- machines (project illustrations) ---- */
+.machine { width: 100%; height: auto; display: block; }
+@keyframes led-blink { 0%, 88%, 100% { opacity: 1; } 94% { opacity: 0.15; } }
+.blink { animation: led-blink 2.4s ease-in-out infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.machine-rover .wheel { animation: spin 1.6s linear infinite; }
+@keyframes drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+.machine-rover { animation: drift 3s ease-in-out infinite; }
+@keyframes scan { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+.machine .scan { animation: scan 1.2s ease-in-out infinite; }
+@keyframes step0 { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+@keyframes step1 { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(-8deg); } }
+.machine-hex .leg-0 { animation: step0 0.9s ease-in-out infinite; }
+.machine-hex .leg-1 { animation: step1 0.9s ease-in-out infinite; }
+@keyframes pan { 0%, 100% { transform: rotate(-30deg); } 50% { transform: rotate(14deg); } }
+.machine-turret .pan { animation: pan 3.2s ease-in-out infinite; }
+@keyframes target { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(14px, 10px); } }
+.machine-turret .target { animation: target 3.2s ease-in-out infinite; }
+@keyframes curl { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-70deg); } }
+.machine-hand .finger { animation: curl 2.6s ease-in-out infinite; }
+@keyframes thumb { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(40deg); } }
+.machine-hand .thumb { animation: thumb 2.6s ease-in-out infinite; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+.machine-swarm .bot { animation: orbit 6s linear infinite; }
+@keyframes follow {
+  0% { transform: translate(14px, 88px) rotate(0deg); }
+  25% { transform: translate(60px, 72px) rotate(-30deg); }
+  50% { transform: translate(100px, 40px) rotate(0deg); }
+  75% { transform: translate(140px, 72px) rotate(30deg); }
+  100% { transform: translate(186px, 88px) rotate(0deg); }
+}
+.machine-lineo .lineo { animation: follow 4s ease-in-out infinite alternate; }
+
+/* project cards */
+.card-machine {
+  background: radial-gradient(120% 90% at 50% 100%, rgba(245, 230, 59, 0.08), transparent 60%), rgba(255, 255, 255, 0.02);
+}
+.led { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 0 10px currentColor; background: currentColor; }
+.led-active { animation: led-blink 1.6s ease-in-out infinite; }
+
+/* lockers with doors */
+.locker-door {
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  transition: transform 500ms var(--ease-out);
+  backface-visibility: hidden;
+}
+@media (hover: hover) and (pointer: fine) {
+  .locker:hover .locker-door { transform: rotateY(-78deg); }
+}
+.locker.open .locker-door { transform: rotateY(-78deg); }
+.locker-inner { background: #15181f; }
+
+/* scoreboard */
+@keyframes flicker { 0%, 100% { opacity: 1; } 8% { opacity: 0.4; } 12% { opacity: 1; } 60% { opacity: 0.85; } }
+.flicker { animation: flicker 4s steps(1) infinite; }
+@keyframes roll { from { transform: translateY(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+.reveal.in .roll { animation: roll 700ms var(--ease-out) both; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+.ticker { animation: ticker 28s linear infinite; }
+.ticker:hover { animation-play-state: paused; }
+@keyframes spark { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--sx), var(--sy)) scale(0); opacity: 0; } }
+.spark { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--volt); pointer-events: none; animation: spark 700ms var(--ease-out) forwards; }
+@keyframes bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.reveal.in .bar { animation: bar 900ms var(--ease-out) both; transform-origin: left; }
+@media (prefers-reduced-motion: reduce) {
+  .machine *, .machine, .blink, .led-active, .flicker, .ticker, .spark { animation: none !important; }
+}

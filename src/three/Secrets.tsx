@@ -122,7 +122,7 @@ function HatchSecret() {
         <Text position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} fontSize={0.5} letterSpacing={0.3} color={COLORS.cyan} anchorX="center" anchorY="middle">
           LIFT ↑
         </Text>
-        <Text position={[0, 2.4, -2.0]} fontSize={0.42} letterSpacing={0.2} color={COLORS.cyan} anchorX="center" anchorY="middle">
+        <Text position={[0, 2.4, -2.0]} rotation={[0, Math.PI, 0]} fontSize={0.42} letterSpacing={0.2} color={COLORS.cyan} anchorX="center" anchorY="middle">
           DRIVE IN TO GO UP
         </Text>
         <pointLight position={[0, 2, 0]} color={COLORS.cyan} intensity={12} distance={9} decay={2} />

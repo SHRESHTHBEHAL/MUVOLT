@@ -16,9 +16,9 @@ export interface TierSettings {
 
 export function selectTier(d: DeviceInfo): Tier {
   if (!d.webgl2) return 'low'
-  if (d.isMobile) return d.benchmarkMs < 25 ? 'medium' : 'low'
-  if (d.benchmarkMs < 40) return 'high'
-  if (d.benchmarkMs < 90) return 'medium'
+  if (d.isMobile) return d.benchmarkMs < 40 ? 'medium' : 'low'
+  if (d.benchmarkMs < 60) return 'high'
+  if (d.benchmarkMs < 120) return 'medium'
   return 'low'
 }
 
