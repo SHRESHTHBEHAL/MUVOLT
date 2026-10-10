@@ -1,5 +1,11 @@
+import { Suspense } from 'react'
+import { Physics } from '@react-three/rapier'
 import { World } from './World'
 import { StationProps, Shutter, Graveyard } from './Props'
+import { Rover } from './Rover'
+import { Tracks, Dust } from './RoverFX'
+import { CameraRig } from './CameraRig'
+import { StaticColliders } from './Colliders'
 import { useStore } from '../store/useStore'
 
 export function Scene() {
@@ -12,6 +18,15 @@ export function Scene() {
       <StationProps />
       <Shutter />
       <Graveyard />
+      <Tracks />
+      <Dust />
+      <Suspense fallback={null}>
+        <Physics gravity={[0, -14, 0]} timeStep="vary">
+          <StaticColliders />
+          <Rover />
+        </Physics>
+      </Suspense>
+      <CameraRig />
     </>
   )
 }

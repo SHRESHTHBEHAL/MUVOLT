@@ -286,7 +286,7 @@ function Dock() {
   })
   return (
     <group position={[s.position[0], 0, s.position[1] + 2.2]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
+      <mesh position={[0, 0.02, 0]} receiveShadow>
         <cylinderGeometry args={[2.2, 2.3, 0.04, 48]} />
         <meshStandardMaterial color="#1d2027" metalness={0.6} roughness={0.4} />
       </mesh>
