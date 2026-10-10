@@ -1,0 +1,17 @@
+export const COLORS = {
+  ink: '#0B0C0F',
+  floor: '#15171c',
+  floorLine: '#23262e',
+  wall: '#1a1d23',
+  wallDark: '#121419',
+  steelDark: '#2a2f38',
+  steelMid: '#3d4450',
+  volt: '#F5E63B',
+  voltDim: '#8a8120',
+  steel: '#4FA3D1',
+  tungsten: '#ffd9a0',
+  rubber: '#0e0f12',
+  rust: '#6b3a22',
+  magenta: '#ff2bd6',
+  cyan: '#2be4ff',
+} as const
