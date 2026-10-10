@@ -75,7 +75,7 @@ export function Rover() {
     honourTeleport(rb)
     const store = bayStore.getState()
     const live = store.boot === 'live'
-    const input = live ? getInput() : { throttle: 0, steer: 0, boost: false, horn: false }
+    const input = live ? getInput(dt) : { throttle: 0, steer: 0, boost: false, horn: false }
 
     // pose
     const p = rb.translation()

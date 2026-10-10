@@ -5,6 +5,7 @@ import './styles.css'
 import { bayStore } from './store/useStore'
 import { keyboard } from './hooks/useKeyboard'
 import { roverTeleport } from './three/roverState'
+import { detectTier } from './logic/detectTier'
 
 if (import.meta.env.DEV) {
   const w = window as unknown as { bay: typeof bayStore; bayKeys: typeof keyboard; bayTeleport: typeof roverTeleport }
@@ -13,8 +14,22 @@ if (import.meta.env.DEV) {
   w.bayTeleport = roverTeleport
 }
 
+function hasWebGL2(): boolean {
+  try {
+    return !!document.createElement('canvas').getContext('webgl2')
+  } catch {
+    return false
+  }
+}
+
+const webgl = hasWebGL2()
+if (webgl && !bayStore.getState().tierOverride) {
+  const tier = detectTier()
+  bayStore.setState({ tier })
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <App webgl={webgl} />
   </StrictMode>,
 )

@@ -15,7 +15,7 @@ export function StaticColliders() {
   const [ax, az] = ARCADE_CENTER
   const gap = 4.2 // half-width of the shutter opening
   return (
-    <RigidBody type="fixed" colliders={false} friction={0.9}>
+    <RigidBody type="fixed" colliders={false} friction={0.1}>
       {/* main floor */}
       <CuboidCollider args={[HALF, 0.5, HALF]} position={[0, -0.5, 0]} />
       {/* walls: back wall has a gap where the shutter is */}
