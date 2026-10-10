@@ -44,7 +44,7 @@ The interest form posts JSON to `join.formEndpoint`. It ships empty, which makes
 
 ## Deploy
 
-It is a static site. On Vercel, import the repo and accept the defaults; `vercel.json` already rewrites every route to `index.html`. Netlify and GitHub Pages work the same way with `dist/` as the output folder.
+It is a static site, live at https://muvolt.vercel.app. Every push to `main` deploys automatically through the Vercel GitHub integration; `vercel.json` already rewrites every route to `index.html`. Netlify and GitHub Pages work the same way with `dist/` as the output folder.
 
 ## Graphics tiers
 
